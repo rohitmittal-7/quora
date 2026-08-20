@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Table(name="questions")
 @Getter
@@ -21,6 +23,6 @@ public class Question {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name="user_id",nullable = false)
+    @JoinColumn(name="userId",nullable = false)
     private User user;
 }
