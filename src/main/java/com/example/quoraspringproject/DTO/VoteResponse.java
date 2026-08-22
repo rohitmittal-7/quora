@@ -1,16 +1,17 @@
 package com.example.quoraspringproject.DTO;
 
+import com.example.quoraspringproject.Enums.VoteType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
-public class AnswerResponse {
+public class VoteResponse {
     private Long id;
-    private String content;
-    private String username;
-    private long upvotes;
-    private long downvotes;
+    private VoteType type;
+    private Long userId;
+    private Long answerId;
 }
