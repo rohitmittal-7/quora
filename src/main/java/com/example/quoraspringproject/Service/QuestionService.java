@@ -1,13 +1,18 @@
 package com.example.quoraspringproject.Service;
 
+import com.example.quoraspringproject.DTO.QuestionResponse;
+import com.example.quoraspringproject.DTO.QuestionUpdateRequest;
+import com.example.quoraspringproject.Exception.ResourceNotFoundException;
 import com.example.quoraspringproject.Models.Question;
 import com.example.quoraspringproject.Models.User;
+import com.example.quoraspringproject.Repository.AnswerRepository;
 import com.example.quoraspringproject.Repository.QuestionRepository;
 import com.example.quoraspringproject.Repository.UserRepository;
+import lombok.Builder;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
+import java.util.List;
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
@@ -18,6 +23,7 @@ public class QuestionService {
         this.userRepository=userRepository;
     }
 
+//Create a new question method
     public Question createQuestion(String title, String description,Long userId){
         User user = userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
@@ -29,4 +35,56 @@ public class QuestionService {
         return questionRepository.save(question);
     }
 
+//Get List of question method
+        public List<QuestionResponse> getAllQuestions(){
+            List<Question> questions= questionRepository.findAll();
+            return questions.stream().map(question -> new QuestionResponse(
+                    question.getId(),
+                    question.getTitle(),
+                    question.getDescription(),
+                    question.getUser().getUsername()
+            )).toList();
+}
+
+//Find question by id method
+        public QuestionResponse getQuestionById(Long id){
+        Question question = questionRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Question not found with id: " +id));
+        return new QuestionResponse(
+                question.getId(),
+                question.getTitle(),
+                question.getDescription(),
+                question.getUser().getUsername());
+    }
+
+//Delete question method
+        public void deleteQuestion(Long id){
+            Question question = questionRepository.findById(id)
+                                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id: " + id));
+                                questionRepository.delete(question);
+        }
+
+//Update Question method
+    public QuestionResponse updateQuestion(
+            Long id,
+            QuestionUpdateRequest request) {
+
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Question not found with id: " + id
+                        )
+                );
+
+        question.setTitle(request.getTitle());
+        question.setDescription(request.getDescription());
+
+        Question updatedQuestion = questionRepository.save(question);
+
+        return new QuestionResponse(
+                updatedQuestion.getId(),
+                updatedQuestion.getTitle(),
+                updatedQuestion.getDescription(),
+                updatedQuestion.getUser().getUsername()
+        );
+    }
 }

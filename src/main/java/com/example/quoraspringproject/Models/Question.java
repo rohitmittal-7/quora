@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -25,4 +26,11 @@ public class Question {
     @ManyToOne
     @JoinColumn(name="userId",nullable = false)
     private User user;
+
+    @OneToMany(
+            mappedBy = "question",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Answer> answers;
 }
