@@ -10,6 +10,9 @@ import com.example.quoraspringproject.Repository.QuestionRepository;
 import com.example.quoraspringproject.Repository.UserRepository;
 import lombok.Builder;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,14 +39,18 @@ public class QuestionService {
     }
 
 //Get List of question method
-        public List<QuestionResponse> getAllQuestions(){
-            List<Question> questions= questionRepository.findAll();
-            return questions.stream().map(question -> new QuestionResponse(
+        public Page<QuestionResponse> getAllQuestions(
+                int page,
+                int size){
+            Pageable pageable = PageRequest.of(page, size);
+
+            Page<Question> questions= questionRepository.findAll(pageable);
+            return questions.map(question -> new QuestionResponse(
                     question.getId(),
                     question.getTitle(),
                     question.getDescription(),
                     question.getUser().getUsername()
-            )).toList();
+            ));
 }
 
 //Find question by id method

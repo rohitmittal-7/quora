@@ -6,6 +6,7 @@ import com.example.quoraspringproject.DTO.QuestionUpdateRequest;
 import com.example.quoraspringproject.Models.Question;
 import com.example.quoraspringproject.Service.QuestionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,8 @@ public class QuestionController {
     }
 
     @GetMapping
-    public List<QuestionResponse> getAllQuestions(){
-        return questionService.getAllQuestions();
+    public Page<QuestionResponse> getAllQuestions(@RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="10") int size){
+        return questionService.getAllQuestions(page,size);
     }
 
     @GetMapping("/{id}")
